@@ -5,7 +5,7 @@
 <hr><hr><br>
 
 <div align="center">
-  <img src="img/match.png" width="500" height="500">
+  <img src="img/matchGame.png" width="500" height="500">
 </div>
 
 <div align="center">
