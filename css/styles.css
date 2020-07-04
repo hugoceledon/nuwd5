@@ -58,6 +58,7 @@ body {
 .moves,
 .time {
     text-align: center;
+    font-size: 1.4em;
     height: 23%;
     width: 100%;
     border: 10px solid #E87306;
@@ -116,6 +117,11 @@ div[class^='col'] {
 }
 
 .elemento {
+    width: 99.4px;
+    height: 96px;
+}
+
+.place {
     width: 99.4px;
     height: 96px;
 }
