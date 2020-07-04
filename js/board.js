@@ -44,7 +44,7 @@ var board = {
                         var current = self.analyzeCurrent()
                         if (current.length != 0) {
                             for (i = 0; i < current.length; i++) {
-                                $("#pos" + current[i]).html("<img src=\"image/save/1.png\" class=\"elemento\"/>")
+                                $("#pos" + current[i]).html("<img src=\"image/1.png\" class=\"elemento\"/>")
                             }
                             self.setProps()
                         }
@@ -58,7 +58,6 @@ var board = {
     firstTimeClear: function() {
         self = this
         var current = self.analyzeCurrent()
-        console.log(current.length)
         if (current.length != 0) {
             for (i = 0; i < current.length; i++) {
                 var ind = Math.floor(Math.random() * 4) + 1;
@@ -140,11 +139,7 @@ var board = {
         return [parseFloat(XY[0]), parseFloat(XY[1])]
     },
     getImgKind: function(elemento) {
-        try {
-            return parseFloat(elemento.split('\\').pop().split('/').pop().split('.')[0])
-        } catch (error) {
-            console.log(elemento)
-        }
+        return parseFloat(elemento.split('\\').pop().split('/').pop().split('.')[0])
     },
     resetScore: function() {
         self = this
