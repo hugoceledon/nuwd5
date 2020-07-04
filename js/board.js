@@ -2,6 +2,7 @@ var board = {
     init: function() {
         this.clear()
         this.movements = 0
+        this.score = 0
         $(".elemento").draggable()
 
     },
@@ -38,8 +39,9 @@ var board = {
                             left: '',
                             top: ''
                         });
-                        self.movements++
-                            var current = self.analyzeCurrent()
+                        self.movements++;
+                        self.score += 100;
+                        var current = self.analyzeCurrent()
                         if (current.length != 0) {
                             for (i = 0; i < current.length; i++) {
                                 $("#pos" + current[i]).html("<img src=\"image/save/1.png\" class=\"elemento\"/>")
@@ -49,6 +51,7 @@ var board = {
                     }
                 }
                 $("#movimientos-text").html(self.movements)
+                $("#score-text").html(self.score)
             }
         });
     },
@@ -142,5 +145,12 @@ var board = {
         } catch (error) {
             console.log(elemento)
         }
+    },
+    resetScore: function() {
+        self = this
+        this.movements = 0
+        this.score = 0
+        $("#movimientos-text").html(self.movements)
+        $("#score-text").html(self.score)
     }
 }
