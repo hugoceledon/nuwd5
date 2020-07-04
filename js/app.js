@@ -1,4 +1,4 @@
-var Secs = 10 // Timer seconds
+var Secs = 10000000 // Timer seconds
 
 var Timer = timer // Timer object
 Timer.init(Secs) // Begin timer object
