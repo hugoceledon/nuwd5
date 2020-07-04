@@ -24,7 +24,7 @@ var timer = {
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
             $("#timer").html(("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2))
             if (distance < 6000) {
-                $("#timer").css('color', '#FF7066').css('font-size', '2.0em');
+                $("#timer").css('color', '#FFD4CC').css('font-size', '2.0em');
             }
             if (distance < 1000) {
                 self.stop();
