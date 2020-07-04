@@ -83,10 +83,12 @@ $(function() {
                 $(this).html("Reiniciar")
                 Board.fill()
                 Timer.start()
+                console.log("Started Game!")
             } else {
                 Timer.reset()
                 Board.clear()
                 $(this).html("Iniciar")
+                console.log("Reset the Timer!")
             }
         } else {
             $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
@@ -95,6 +97,7 @@ $(function() {
             startAnimation();
             $(this).html("Iniciar")
             Timer.init(Secs)
+            console.log("Back to main event!")
         }
     })
 })
