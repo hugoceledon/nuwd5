@@ -1,10 +1,11 @@
 var board = {
-    init: function() {
+    init: function(correctMoveScore, wrongMoveScore) {
         this.clear()
         this.movements = 0
         this.score = 0
         $(".elemento").draggable()
-
+        this.correctMoveScore = correctMoveScore
+        this.wrongMoveScore = wrongMoveScore
     },
     fill: function() {
         var self = this
@@ -22,6 +23,45 @@ var board = {
             $(".panel-tablero").toggle("clip", 200)
         })
     },
+    add: function(dict) {
+        var self = this
+        for (var i in dict) {
+            if (dict.hasOwnProperty(i)) {
+                // var colHTML = $(".col-" + i).html()
+                // for (var j = 9; j <= 8 + dict[i].length; j++) {
+                //     var ind = Math.floor(Math.random() * 4) + 1;
+                //     colHTML += "<div class=\"place\" id=\"pos" + dict[i][j] + "\"> <img src=\"image/" + ind + ".png\" class=\"elemento\"/></div>"
+                // }
+                // $(".col-" + i).html(colHTML)
+            }
+        }
+    },
+    getColumnsDict: function(current) {
+        var dict = new Object();
+        for (i = 0; i < current.length; i++) {
+            var res = current[i].split("-");
+            if (res[1] in dict) {
+                dict[res[1]].push(current[i])
+            } else {
+                dict[res[1]] = [current[i]]
+            }
+        }
+        return dict
+    },
+    removeElements: function(current) {
+        self = this
+        self.score += self.correctMoveScore;
+        if (current.length != 0) {
+            var dict = self.getColumnsDict(current)
+            console.log(dict) // dictionary of amount elements to remove on each column
+
+            self.add(dict)
+
+            for (i = 0; i < current.length; i++) {
+                // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
+            }
+        }
+    },
     setProps: function() {
         self = this
         $(".elemento").draggable({ revert: true })
@@ -33,21 +73,38 @@ var board = {
                 var colDiff = Math.abs(From[1] - To[1])
                 if (rowDiff <= 1 && colDiff <= 1) { // Only the nearest
                     if ((rowDiff == 1 || colDiff == 1) && !(rowDiff == 1 && colDiff == 1)) { //XOR for diagonals
-                        ui.draggable.parent().append($(this).children());
-                        $(this).append(ui.draggable);
-                        ui.draggable.css({
+
+                        var Destination = ui.draggable.parent()
+                        var Source = $(this)
+                        var Draggable = ui.draggable
+                        var Droppable = $(this).children()
+
+                        Destination.append(Droppable);
+                        Source.append(Draggable);
+                        Draggable.css({
                             left: '',
                             top: ''
                         });
+
                         self.movements++;
-                        self.score += 100;
                         var current = self.analyzeCurrent()
                         if (current.length != 0) {
-                            for (i = 0; i < current.length; i++) {
-                                $("#pos" + current[i]).html("<img src=\"image/1.png\" class=\"elemento\"/>")
-                            }
-                            self.setProps()
+                            var current = self.analyzeCurrent()
+                            self.removeElements(current)
+                            console.log("YES")
+                        } else {
+                            self.score -= self.wrongMoveScore;
+
+                            Destination.append(Draggable);
+                            Source.append(Droppable);
+                            Draggable.css({
+                                left: '',
+                                top: ''
+                            });
+
+                            console.log("NO")
                         }
+                        self.setProps()
                     }
                 }
                 $("#movimientos-text").html(self.movements)
