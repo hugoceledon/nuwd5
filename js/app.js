@@ -4,7 +4,7 @@ var Timer = timer // Timer object
 Timer.init(Secs) // Begin timer object
 
 var Board = board // Board object
-Board.init() // Begin board object
+Board.init(correctMoveScore = 100, wrongMoveScore = 20) // Begin board object
 
 var bigScore = false; // Boolean to know if score is set to full screen
 var endGame = false; // Boolean to know if game has ended or not
