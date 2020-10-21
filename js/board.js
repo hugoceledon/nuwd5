@@ -48,19 +48,47 @@ var board = {
         }
         return dict
     },
+    blink: function(current) {
+        for (i = 0; i < current.length; i++) {
+            $("#pos" + current[i]).animate({
+                opacity: 1.0,
+                visibility: "visible"
+            }, 100, function() {
+                $(this).animate({
+                    opacity: 0
+                }, 100, function() {
+                    $(this).animate({
+                        opacity: 1.0
+                    }, 100, function() {
+                        $(this).animate({
+                            opacity: 0
+                        }, 100)
+                    })
+                })
+            })
+        }
+    },
     removeElements: function(current) {
         self = this
-        self.score += self.correctMoveScore;
-        if (current.length != 0) {
-            var dict = self.getColumnsDict(current)
-            console.log(dict) // dictionary of amount elements to remove on each column
+        self.score += self.correctMoveScore * current.length;
 
-            self.add(dict)
+        self.blink(current)
 
-            for (i = 0; i < current.length; i++) {
-                // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
+        var dict = self.getColumnsDict(current)
+            // REMOVE INVISIBLE ELEMENTS
+        for (var key in dict) {
+            if (dict.hasOwnProperty(key)) {
+                console.log(key, dict[key]);
+                var columnLength = dict[key].length
+                for (i = 0; i < columnLength; i++) {
+                    var position = parseInt(dict[key][i].replace("-" + key, ""))
+                    console.log(position.toString() + " to " + (position - columnLength).toString())
+                        // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
+                }
             }
         }
+
+        self.add(dict)
     },
     setProps: function() {
         self = this
@@ -91,18 +119,29 @@ var board = {
                         if (current.length != 0) {
                             var current = self.analyzeCurrent()
                             self.removeElements(current)
-                            console.log("YES")
                         } else {
                             self.score -= self.wrongMoveScore;
-
+                            Draggable.animate({
+                                left: "+=10"
+                            }, 50, function() {
+                                $(this).animate({
+                                    left: "-=10"
+                                }, 50, function() {
+                                    $(this).animate({
+                                        left: "+=10"
+                                    }, 50, function() {
+                                        $(this).animate({
+                                            left: "0"
+                                        }, 50)
+                                    })
+                                })
+                            })
                             Destination.append(Draggable);
                             Source.append(Droppable);
                             Draggable.css({
                                 left: '',
                                 top: ''
                             });
-
-                            console.log("NO")
                         }
                         self.setProps()
                     }
