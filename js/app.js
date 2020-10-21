@@ -1,23 +1,21 @@
-// Configuration Variables
-var minutes = 5
-var correctMoveScore = 50
-var wrongMoveScore = 20
+/*!
+ * Board Match Game
+ * HUGO JOSÉ CELEDÓN FLÓREZ
+ * Next University
+ *
+ * Date: 2020-10-10T10:00
+ */
 
-// Objects declaration
+// Board Object Declaration
+var matchGame = boardGame
 
-var Timer = timer // Timer object
-Timer.init(minutes * 60) // Begin timer object
+matchGame.init(
+    correctMoveScore = 50, // Score to be added when a correct move is made.
+    wrongMoveScore = 20, // Score to be substracted when a wrong move is made.
+    timerMinutes = 0.1 // Timer's end time.
+)
 
-var Board = board // Board object
-Board.init(correctMoveScore, wrongMoveScore) // Begin board object
-
-// Main function
+// Main Function
 $(function() {
-    setInterval(function() {
-        if (Timer.clockOver) {
-            Board.startAnimation();
-            Timer.clockOver = false;
-            Board.endGame = true;
-        }
-    }, 50)
+    matchGame.start(); // Start Method
 })
