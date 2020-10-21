@@ -1,11 +1,45 @@
 var board = {
-    init: function(correctMoveScore, wrongMoveScore) {
+    init: function(CMS, WMS) {
         this.clear()
         this.movements = 0
         this.score = 0
         $(".elemento").draggable()
-        this.correctMoveScore = correctMoveScore
-        this.wrongMoveScore = wrongMoveScore
+        this.correctMoveScore = CMS
+        this.wrongMoveScore = WMS
+        this.initResetBtn()
+        this.blinkTitle(".main-titulo")
+        this.blinkTitle(".game-over")
+        this.bigScore = false; // Boolean to know if score is set to full screen
+        this.endGame = false; // Boolean to know if game has ended or not
+    },
+    initResetBtn: function() {
+        var self = this
+        $(".btn-reinicio").mouseup(function() {
+            if (!self.endGame) {
+                if (!Timer.running) {
+                    $(this).html("Reiniciar")
+                    Board.fill()
+                    Timer.start()
+                    console.log("Started Game!")
+                } else {
+                    Timer.reset()
+                    Board.clear()
+                    Board.resetScore()
+                    $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
+                    $(this).html("Iniciar")
+                    console.log("Reset the Timer!")
+                }
+            } else {
+                $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
+                Board.erase()
+                self.endGame = false;
+                Board.startAnimation();
+                $(this).html("Iniciar")
+                Timer.init(Secs)
+                Board.resetScore()
+                console.log("Back to main event!")
+            }
+        })
     },
     fill: function() {
         var self = this
@@ -243,5 +277,60 @@ var board = {
         this.score = 0
         $("#movimientos-text").html(self.movements)
         $("#score-text").html(self.score)
+    },
+    startAnimation: function() { // Animation to set score full-screen or go back to default
+        self = this
+        if (self.bigScore) {
+            self.bigScore = false;
+            $(".game-over").toggle("clip", 200)
+            $(".panel-tablero").toggle("slide", 1, function() {
+                $(this).animate({
+                    width: "70%"
+                }, 999)
+            })
+            $(".panel-score").animate({
+                width: "25%"
+            }, 1000, function() {
+                $(".time").toggle("clip", 500, function() {
+                    $(".moves").toggle("clip", 250, function() {
+                        $(".moves").toggle("clip", 250, function() {
+                            $(".score").toggle("clip", 250, function() {
+                                $(".score").toggle("clip", 250)
+                            })
+                        })
+                    })
+                })
+            })
+        } else {
+            self.bigScore = true;
+            $(".panel-tablero").animate({
+                width: "0%"
+            }, 999, function() {
+                $(this).toggle("slide", 1)
+            });
+            $(".panel-score").animate({
+                width: "100%"
+            }, 1000, function() {
+                $(".game-over").toggle()
+                $(".time").toggle("clip", 500)
+            })
+
+        }
+    },
+    blinkTitle: function(title) {
+        self = this
+        $(title).animate({
+            color: "#FFF"
+        }, 1000, function() {
+            self.yellowTitle(title)
+        });
+    },
+    yellowTitle: function(title) {
+        self = this
+        $(title).animate({
+            color: "#DCFF0E"
+        }, 600, function() {
+            self.blinkTitle(title)
+        });
     }
 }
