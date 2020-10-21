@@ -1,12 +1,23 @@
+/*!
+ * Timer Object
+ * HUGO JOSÉ CELEDÓN FLÓREZ
+ * Next University
+ *
+ * Date: 2020-10-10T10:00
+ */
+
 var timer = {
     init: function(secs) {
+        // Timer initialization.
+
+        this.secs = secs;
         $("#timer").css('font-size', '1.4em');
         this.running = false;
         this.clockOver = false;
-        this.secs = secs;
         $("#timer").html(new Date(this.secs * 1000).toISOString().substr(14, 5))
     },
     start: function() {
+        // Method to start the timer.
         this.clockOver = false;
         this.running = true;
         var initialDate = new Date();
@@ -34,10 +45,16 @@ var timer = {
         }, 50);
     },
     stop: function() {
+        // Method to stop timer.
         clearInterval(this.x);
     },
     reset: function() {
+        // Method to stop and restart timer object.
         this.stop()
+        this.restart()
+    },
+    restart: function() {
+        // Method to restart timer object.
         this.init(this.secs)
     }
 }
