@@ -12,7 +12,7 @@ var matchGame = boardGame
 matchGame.init(
     correctMoveScore = 50, // Score to be added when a correct move is made.
     wrongMoveScore = 20, // Score to be substracted when a wrong move is made.
-    timerMinutes = 0.1 // Timer's end time.
+    timerMinutes = 5 // Timer's end time in minutes.
 )
 
 // Main Function
