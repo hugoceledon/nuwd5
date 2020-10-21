@@ -1,106 +1,23 @@
-var Secs = 5 * 60 // Timer seconds
+// Configuration Variables
+var minutes = 5
+var correctMoveScore = 50
+var wrongMoveScore = 20
+
+// Objects declaration
 
 var Timer = timer // Timer object
-Timer.init(Secs) // Begin timer object
+Timer.init(minutes * 60) // Begin timer object
 
 var Board = board // Board object
-Board.init(correctMoveScore = 20, wrongMoveScore = 20) // Begin board object
+Board.init(correctMoveScore, wrongMoveScore) // Begin board object
 
-var bigScore = false; // Boolean to know if score is set to full screen
-var endGame = false; // Boolean to know if game has ended or not
-
-function startAnimation() { // Animation to set score full-screen or go back to default
-    if (bigScore) {
-        bigScore = false;
-        $(".game-over").toggle("clip", 200)
-        $(".panel-tablero").toggle("slide", 1, function() {
-            $(this).animate({
-                width: "70%"
-            }, 999)
-        })
-        $(".panel-score").animate({
-            width: "25%"
-        }, 1000, function() {
-            $(".time").toggle("clip", 500, function() {
-                $(".moves").toggle("clip", 250, function() {
-                    $(".moves").toggle("clip", 250, function() {
-                        $(".score").toggle("clip", 250, function() {
-                            $(".score").toggle("clip", 250)
-                        })
-                    })
-                })
-            })
-        })
-    } else {
-        bigScore = true;
-        $(".panel-tablero").animate({
-            width: "0%"
-        }, 999, function() {
-            $(this).toggle("slide", 1)
-        });
-        $(".panel-score").animate({
-            width: "100%"
-        }, 1000, function() {
-            $(".game-over").toggle()
-            $(".time").toggle("clip", 500)
-        })
-
-    }
-}
-
+// Main function
 $(function() {
-
-    function blinkTitle(title) {
-        $(title).animate({
-            color: "#FFF"
-        }, 1000, function() {
-            yellowTitle(title)
-        });
-    }
-
-    function yellowTitle(title) {
-        $(title).animate({
-            color: "#DCFF0E"
-        }, 600, function() {
-            blinkTitle(title)
-        });
-    }
-
-    blinkTitle(".main-titulo")
-    blinkTitle(".game-over")
-
     setInterval(function() {
         if (Timer.clockOver) {
-            startAnimation();
+            Board.startAnimation();
             Timer.clockOver = false;
-            endGame = true;
+            Board.endGame = true;
         }
     }, 50)
-
-    $(".btn-reinicio").mouseup(function() {
-        if (!endGame) {
-            if (!Timer.running) {
-                $(this).html("Reiniciar")
-                Board.fill()
-                Timer.start()
-                console.log("Started Game!")
-            } else {
-                Timer.reset()
-                Board.clear()
-                Board.resetScore()
-                $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
-                $(this).html("Iniciar")
-                console.log("Reset the Timer!")
-            }
-        } else {
-            $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
-            Board.erase()
-            endGame = false;
-            startAnimation();
-            $(this).html("Iniciar")
-            Timer.init(Secs)
-            Board.resetScore()
-            console.log("Back to main event!")
-        }
-    })
 })
