@@ -94,24 +94,10 @@ var boardGame = {
             $(".panel-tablero").toggle("clip", 200)
         })
     },
-    add: function(dict) {
-        // ? Add new random elements
-        var self = this
-        for (var i in dict) {
-            if (dict.hasOwnProperty(i)) {
-                // var colHTML = $(".col-" + i).html()
-                // for (var j = 9; j <= 8 + dict[i].length; j++) {
-                //     var ind = Math.floor(Math.random() * 4) + 1;
-                //     colHTML += "<div class=\"place\" id=\"pos" + dict[i][j] + "\"> <img src=\"image/" + ind + ".png\" class=\"elemento\"/></div>"
-                // }
-                // $(".col-" + i).html(colHTML)
-            }
-        }
-    },
     getColumnsDict: function(current) {
         // Format current elements to a columns dictionary.
         var dict = new Object();
-        for (i = 0; i < current.length; i++) {
+        for (var i = 0; i < current.length; i++) {
             var res = current[i].split("-");
             if (res[1] in dict) {
                 dict[res[1]].push(current[i])
@@ -123,7 +109,7 @@ var boardGame = {
     },
     blink: function(current) {
         // Blink animation when current elements are going to disapear.
-        for (i = 0; i < current.length; i++) {
+        for (var i = 0; i < current.length; i++) {
             $("#pos" + current[i]).animate({
                 opacity: 1.0,
                 visibility: "visible"
@@ -141,30 +127,6 @@ var boardGame = {
                 })
             })
         }
-    },
-    removeMatches: function(current) {
-        // Remove element matches.
-        self = this
-        self.score += self.correctMoveScore * current.length;
-
-        self.blink(current)
-
-        var dict = self.getColumnsDict(current);
-        // REMOVE INVISIBLE ELEMENTS
-        for (var key in dict) {
-            if (dict.hasOwnProperty(key)) {
-                console.log(key, dict[key]);
-                var columnLength = dict[key].length
-                for (i = 0; i < columnLength; i++) {
-                    var position = parseInt(dict[key][i].replace("-" + key, ""))
-                    console.log(position)
-                        // console.log(position.toString() + " to " + (position - columnLength).toString())
-                        // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
-                }
-            }
-        }
-
-        self.add(dict)
     },
     setProps: function() {
         // Set drag and drop properties to all element objects.
@@ -233,7 +195,7 @@ var boardGame = {
         self = this
         var current = self.analyzeCurrent()
         if (current.length != 0) {
-            for (i = 0; i < current.length; i++) {
+            for (var i = 0; i < current.length; i++) {
                 var ind = Math.floor(Math.random() * 4) + 1;
                 $("#pos" + current[i]).html("<img src=\"image/" + ind + ".png\" class=\"elemento\"/>")
             }
@@ -385,5 +347,48 @@ var boardGame = {
         }, 600, function() {
             self.blinkTitle(title)
         });
+    },
+    removeMatches: function(current) {
+        // Remove element matches.
+        self = this
+        self.score += self.correctMoveScore * current.length;
+
+        self.blink(current)
+
+        var dict = self.getColumnsDict(current);
+        // REMOVE INVISIBLE ELEMENTS
+        for (var key in dict) {
+            if (dict.hasOwnProperty(key)) {
+                var columnLength = dict[key].length
+                var removePositions = []
+                for (var i = 0; i < columnLength; i++) {
+                    removePositions.push(parseInt(dict[key][i].replace("-" + key, "")))
+                }
+                var keepPositions = Array.from(Array(7), (v, i) => i + 1).filter(function(value) { return !removePositions.includes(value) });
+                console.log(key, keepPositions, removePositions)
+                    // for (var i = 0; i <= 7; i++) {
+
+                // }
+                // console.log(dict[key].contains(1))
+                // console.log(position.toString() + " to " + (position - columnLength).toString())
+                // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
+            }
+        }
+
+        self.add(dict)
+    },
+    add: function(dict) {
+        // ? Add new random elements
+        var self = this
+        for (var i in dict) {
+            if (dict.hasOwnProperty(i)) {
+                // var colHTML = $(".col-" + i).html()
+                // for (var j = 9; j <= 8 + dict[i].length; j++) {
+                //     var ind = Math.floor(Math.random() * 4) + 1;
+                //     colHTML += "<div class=\"place\" id=\"pos" + dict[i][j] + "\"> <img src=\"image/" + ind + ".png\" class=\"elemento\"/></div>"
+                // }
+                // $(".col-" + i).html(colHTML)
+            }
+        }
     }
 }
