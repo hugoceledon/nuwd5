@@ -364,9 +364,23 @@ var boardGame = {
                 for (var i = 0; i < columnLength; i++) {
                     removePositions.push(parseInt(dict[key][i].replace("-" + key, "")))
                 }
+                removePositions.sort(function(a, b) { return a - b; });
+                removePositions = [...new Set(removePositions)];
                 var keepPositions = Array.from(Array(7), (v, i) => i + 1).filter(function(value) { return !removePositions.includes(value) });
                 console.log(key, keepPositions, removePositions)
-                    // for (var i = 0; i <= 7; i++) {
+                for (var k = 7; k >= 1; k--) {
+                    if (keepPositions.length > 0) {
+                        var value = k;
+                        if (!keepPositions.includes(k)) {
+                            value = Math.max(...keepPositions);
+                            console.log("move", value, "to", k)
+                        }
+                        keepPositions.splice(keepPositions.indexOf(value), 1);
+                    } else {
+                        console.log("create", k)
+                    }
+                }
+                // for (var i = 0; i <= 7; i++) {
 
                 // }
                 // console.log(dict[key].contains(1))
