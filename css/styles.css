@@ -22,7 +22,8 @@ body {
 
 .main-titulo {
     font-family: gameFont;
-    font-size: 3em;
+    text-align: center;
+    font-size: 5em;
     color: #DCFF0E;
     width: 100%;
 }
