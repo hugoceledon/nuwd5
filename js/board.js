@@ -53,7 +53,7 @@ var boardGame = {
         $(".btn-reinicio").mouseup(function() {
             if (!self.endGame) {
                 if (!self.Timer.running) {
-                    $(this).html("Reiniciar")
+                    $(this).html("reiniciar")
                     self.fill()
                     self.Timer.start()
                     console.log("Started Game!")
@@ -62,7 +62,7 @@ var boardGame = {
                     self.clear()
                     self.resetScore()
                     $("#timer").css('color', '#E8CA06').css('font-size', '1.4em');
-                    $(this).html("Iniciar")
+                    $(this).html("iniciar")
                     console.log("Reseted Timer!")
                 }
             } else {
@@ -70,7 +70,7 @@ var boardGame = {
                 self.eraseColumns()
                 self.endGame = false;
                 self.startAnimation();
-                $(this).html("Iniciar")
+                $(this).html("iniciar")
                 self.Timer.restart()
                 self.resetScore()
                 console.log("Back to main event!")
@@ -107,27 +107,6 @@ var boardGame = {
         }
         return dict
     },
-    blink: function(current) {
-        // Blink animation when current elements are going to disapear.
-        for (var i = 0; i < current.length; i++) {
-            $("#pos" + current[i]).animate({
-                opacity: 1.0,
-                visibility: "visible"
-            }, 100, function() {
-                $(this).animate({
-                    opacity: 0
-                }, 100, function() {
-                    $(this).animate({
-                        opacity: 1.0
-                    }, 100, function() {
-                        $(this).animate({
-                            opacity: 0
-                        }, 100)
-                    })
-                })
-            })
-        }
-    },
     setProps: function() {
         // Set drag and drop properties to all element objects.
         self = this
@@ -156,31 +135,22 @@ var boardGame = {
                         self.movements++;
                         var current = self.analyzeCurrent()
                         if (current.length != 0) {
-                            var current = self.analyzeCurrent()
+                            Draggable.effect('pulsate', {}, 700)
                             self.removeMatches(current)
                         } else {
                             self.score -= self.wrongMoveScore;
-                            Draggable.animate({
-                                left: "+=10"
-                            }, 50, function() {
-                                $(this).animate({
-                                    left: "-=10"
-                                }, 50, function() {
-                                    $(this).animate({
-                                        left: "+=10"
-                                    }, 50, function() {
-                                        $(this).animate({
-                                            left: "0"
-                                        }, 50)
-                                    })
-                                })
-                            })
-                            Destination.append(Draggable);
-                            Source.append(Droppable);
-                            Draggable.css({
-                                left: '',
-                                top: ''
-                            });
+                            // Wrong move animation
+                            Draggable.effect('shake', {}, 500);
+                            Droppable.effect('shake', {}, 500);
+
+                            setTimeout(function(Destination, Source, Draggable, Droppable) {
+                                Destination.append(Draggable);
+                                Source.append(Droppable);
+                                Draggable.css({
+                                    left: '',
+                                    top: ''
+                                });
+                            }, 500, Destination, Source, Draggable, Droppable)
                         }
                         self.setProps()
                     }
@@ -350,59 +320,84 @@ var boardGame = {
     },
     removeMatches: function(current) {
         // Remove element matches.
-        self = this
-        self.score += self.correctMoveScore * current.length;
+        if (current.length > 0) {
+            self = this
+            self.score += self.correctMoveScore * current.length;
 
-        self.blink(current)
+            for (var i = 0; i <= current.length; i++) {
+                var element = $("#pos" + current[i]).children();
 
-        var dict = self.getColumnsDict(current);
-        // REMOVE INVISIBLE ELEMENTS
-        for (var key in dict) {
-            if (dict.hasOwnProperty(key)) {
-                var columnLength = dict[key].length
-                var removePositions = []
-                for (var i = 0; i < columnLength; i++) {
-                    removePositions.push(parseInt(dict[key][i].replace("-" + key, "")))
-                }
-                removePositions.sort(function(a, b) { return a - b; });
-                removePositions = [...new Set(removePositions)];
-                var keepPositions = Array.from(Array(7), (v, i) => i + 1).filter(function(value) { return !removePositions.includes(value) });
-                console.log(key, keepPositions, removePositions)
-                for (var k = 7; k >= 1; k--) {
-                    if (keepPositions.length > 0) {
-                        var value = k;
-                        if (!keepPositions.includes(k)) {
-                            value = Math.max(...keepPositions);
-                            console.log("move", value, "to", k)
+                // Animate the disappearance of elemnts
+                element.animate({
+                    opacity: 0
+                }, 100, function() {
+                    $(this).animate({
+                        opacity: 1.0
+                    }, 60, function() {
+                        $(this).effect('explode', {}, 400, function() {
+                            $(this).animate({
+                                opacity: 0
+                            }, 1)
+                        })
+                    })
+                })
+
+            }
+            // Recursive function to delete all matches
+            setTimeout(function(current) {
+                var dict = self.getColumnsDict(current);
+                for (var key in dict) {
+                    if (dict.hasOwnProperty(key)) {
+                        var columnLength = dict[key].length
+                        var removePositions = []
+                        for (var i = 0; i < columnLength; i++) {
+                            removePositions.push(parseInt(dict[key][i].replace("-" + key, "")))
                         }
-                        keepPositions.splice(keepPositions.indexOf(value), 1);
-                    } else {
-                        console.log("create", k)
+                        removePositions.sort(function(a, b) { return a - b; });
+                        removePositions = [...new Set(removePositions)];
+                        var keepPositions = Array.from(Array(7), (v, i) => i + 1).filter(function(value) { return !removePositions.includes(value) });
+
+                        for (var k = 7; k >= 1; k--) {
+                            if (keepPositions.length > 0) {
+                                var value = k;
+                                if (!keepPositions.includes(k)) {
+                                    value = Math.max(...keepPositions);
+                                    self.moveElement(key, value, k)
+                                }
+                                keepPositions.splice(keepPositions.indexOf(value), 1);
+                            } else {
+                                self.createElement(key, k)
+                            }
+                        }
                     }
                 }
-                // for (var i = 0; i <= 7; i++) {
+                self.removeMatches(self.analyzeCurrent())
+            }, 300, current)
 
-                // }
-                // console.log(dict[key].contains(1))
-                // console.log(position.toString() + " to " + (position - columnLength).toString())
-                // $("#pos" + current[i]).html("<img src=\"image/2.png\" class=\"elemento\"/>")
-            }
         }
-
-        self.add(dict)
+        self.setProps()
     },
-    add: function(dict) {
-        // ? Add new random elements
-        var self = this
-        for (var i in dict) {
-            if (dict.hasOwnProperty(i)) {
-                // var colHTML = $(".col-" + i).html()
-                // for (var j = 9; j <= 8 + dict[i].length; j++) {
-                //     var ind = Math.floor(Math.random() * 4) + 1;
-                //     colHTML += "<div class=\"place\" id=\"pos" + dict[i][j] + "\"> <img src=\"image/" + ind + ".png\" class=\"elemento\"/></div>"
-                // }
-                // $(".col-" + i).html(colHTML)
-            }
-        }
+    moveElement: function(column, origin, destiny) {
+        // Moves an existing element on a column from origin row to destiny row
+        var Origin = $("#pos" + origin + "-" + column)
+        var Destiny = $("#pos" + destiny + "-" + column)
+        var oChild = Origin.children()
+        var dChild = Destiny.children()
+
+        Destiny.append(oChild)
+        Origin.append(dChild)
+        oChild.css("top", "-=" + (99 * destiny))
+        oChild.animate({ opacity: 1.0, top: "0" }, 300)
+    },
+    createElement: function(column, destiny) {
+        // Creates a new random element on a column on destiny row
+        var ind = Math.floor(Math.random() * 4) + 1;
+        var Destiny = $("#pos" + destiny + "-" + column)
+        Destiny.html("<img src=\"image/" + ind + ".png\" class=\"elemento\" style=\"opacity:0;\"/>").children()
+        var dChild = Destiny.children()
+        dChild.css("top", "-=" + (99 * (7 - destiny)))
+        dChild.animate({}, 650, function() {
+            $(this).animate({ top: "0", opacity: 1.0 }, 650)
+        })
     }
 }
